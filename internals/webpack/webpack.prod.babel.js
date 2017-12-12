@@ -3,6 +3,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OfflinePlugin = require('offline-plugin');
+const Clean = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = require('./webpack.base.babel')({
   // In production, we skip all hot-reloading stuff
@@ -16,8 +18,28 @@ module.exports = require('./webpack.base.babel')({
     chunkFilename: '[name].[chunkhash].chunk.js',
   },
 
+  // We use ExtractTextPlugin so we get a seperate CSS file instead
+  // of the CSS being in the JS and injected as a style tag
+  cssLoaders: ExtractTextPlugin.extract({
+    fallback: 'style-loader',
+    use: {
+      loader: 'css-loader',
+      options: {
+        camelCase: true,
+        modules: true,
+        importLoaders: 1,
+      },
+    },
+  }),
+
   plugins: [
+    new Clean(['build']),
     new webpack.optimize.ModuleConcatenationPlugin(),
+    new ExtractTextPlugin({
+      filename: '[name].[contenthash].css',
+      ignoreOrder: true,
+      allChunks: true,
+    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       children: true,

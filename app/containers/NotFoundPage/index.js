@@ -12,12 +12,14 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import styles from './index.css';
+
 import messages from './messages';
 
 export default class NotFound extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     return (
-      <h1>
+      <h1 className={styles['nfp-test']}>
         <FormattedMessage {...messages.header} />
       </h1>
     );
